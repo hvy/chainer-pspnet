@@ -46,11 +46,12 @@ class Dataset(ConfigBase):
 
     def __init__(self, **kwargs):
         required_keys = [
-            'module',
             'name',
             'batchsize',
         ]
         optional_keys = [
+            'file',
+            'module',
             'args',
         ]
         super().__init__(
@@ -81,10 +82,11 @@ class Model(ConfigBase):
 
     def __init__(self, **kwargs):
         required_keys = [
-            'module',
             'name',
         ]
         optional_keys = [
+            'file',
+            'module',
             'args'
         ]
         super().__init__(
@@ -95,10 +97,11 @@ class Loss(ConfigBase):
 
     def __init__(self, **kwargs):
         required_keys = [
-            'module',
             'name',
         ]
         optional_keys = [
+            'file',
+            'module',
             'args',
         ]
         super().__init__(

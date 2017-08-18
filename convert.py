@@ -14,24 +14,22 @@ import caffe_pb2
 import chainer
 import chainer.links as L
 from chainer import serializers
-from pspnet import PSPNet
+from chainercv.links import PSPNet
 
 chainer.config.train = False
 
 
-def get_chainer_model(n_class, n_layers, feat_size, mid_stride):
-    if n_layers == 50:
-        n_blocks = [3, 4, 6, 3]
-    elif n_layers == 101:
-        n_blocks = [3, 4, 23, 3]
-    else:
-        raise ValueError('{} is currently not supported'.format(n_layers))
-    model = PSPNet(n_class, n_blocks, feat_size, mid_stride=mid_stride)
-    in_size = 713 if feat_size == 90 else 473
-    model(np.random.rand(1, 3, in_size, in_size).astype(np.float32))
+def get_chainer_model(n_class, input_size, n_blocks, pyramids, mid_stride):
+    with chainer.using_config('train', True):
+        model = PSPNet(n_class, input_size, n_blocks, pyramids, mid_stride)
+        model(np.random.rand(1, 3, input_size, input_size).astype(np.float32))
     size = 0
     for param in model.params():
-        size += param.size
+        try:
+            size += param.size
+        except Exception as e:
+            print(str(type(e)), e, param, param.name)
+            exit(-1)
     print('PSPNet (chainer) size:', size)
     return model
 
@@ -205,26 +203,61 @@ if __name__ == '__main__':
         exit()
 
     # Num of parameters of models for...
-    # VOC2012: 65708501
+    # VOC2012: 65708501 (train: 70524906)
     # Cityscapes: 65707475
     # ADE20K: 46782550
 
-    for param_fn, proto_fn, n_layers, n_class, feat_size, mid_stride in [
-        ('pspnet101_cityscapes.caffemodel',
-         'pspnet101_cityscapes_713.prototxt', 101, 19, 90, True),
-        ('pspnet101_VOC2012.caffemodel',
-         'pspnet101_VOC2012_473.prototxt', 101, 21, 60, True),
-        ('pspnet50_ADE20K.caffemodel',
-         'pspnet50_ADE20K_473.prototxt', 50, 150, 60, False)
-    ]:
+    settings = {
+        'voc2012': {
+            'proto_fn': 'pspnet101_VOC2012_473.prototxt',
+            'param_fn': 'pspnet101_VOC2012.caffemodel',
+            'n_class': 21,
+            'input_size': 473,
+            'n_blocks': [3, 4, 23, 3],
+            'feat_size': 60,
+            'mid_stride': True,
+            'pyramids': [6, 3, 2, 1],
+        },
+        'cityscapes': {
+            'proto_fn': 'pspnet101_cityscapes_713.prototxt',
+            'param_fn': 'pspnet101_cityscapes.caffemodel',
+            'n_class': 19,
+            'input_size': 713,
+            'n_blocks': [3, 4, 23, 3],
+            'feat_size': 90,
+            'mid_stride': True,
+            'pyramids': [6, 3, 2, 1],
+        },
+        'ade20k': {
+            'proto_fn': 'pspnet50_ADE20K_473.prototxt',
+            'param_fn': 'pspnet50_ADE20K.caffemodel',
+            'n_class': 150,
+            'input_size': 473,
+            'n_blocks': [3, 4, 6, 3],
+            'feat_size': 60,
+            'mid_stride': False,
+            'pyramids': [6, 3, 2, 1],
+        }
+    }
+
+    for dataset_name in ['voc2012', 'cityscapes', 'ade20k']:
+        proto_fn = settings[dataset_name]['proto_fn']
+        param_fn = settings[dataset_name]['param_fn']
+        n_class = settings[dataset_name]['n_class']
+        input_size = settings[dataset_name]['input_size']
+        n_blocks = settings[dataset_name]['n_blocks']
+        pyramids = settings[dataset_name]['pyramids']
+        mid_stride = settings[dataset_name]['mid_stride']
+
         name = os.path.splitext(proto_fn)[0]
         param_fn = os.path.join(proto_dir, param_fn)
         proto_fn = os.path.join(proto_dir, proto_fn)
 
-        model = get_chainer_model(n_class, n_layers, feat_size, mid_stride)
+        model = get_chainer_model(
+            n_class, input_size, n_blocks, pyramids, mid_stride)
         param, net = get_param_net(proto_dir, param_fn, proto_fn)
         model = transfer(model, param, net)
 
         serializers.save_npz(
-            'weights/{}_reference.chainer'.format(name), model)
-        print('weights/{}_reference.chainer'.format(name), 'saved')
+            'weights/{}_reference.npz'.format(name), model)
+        print('weights/{}_reference.npz'.format(name), 'saved')

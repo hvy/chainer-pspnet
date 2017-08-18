@@ -54,6 +54,7 @@ $ python demo.py -g 0 -m Cityscapes -f aachen_000000_000019_leftImg8bit.png
 - Python 3.4.4+
     - protobuf 3.2.0+
     - Chainer 3.0.0b1+
+    - NumPy 1.12.0+
 
 ## 1. Download the original weights
 
