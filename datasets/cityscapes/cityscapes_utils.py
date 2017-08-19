@@ -3,7 +3,6 @@
 
 from collections import namedtuple
 
-
 Label = namedtuple(
     'Label', ['name', 'id', 'trainId', 'category', 'categoryId',
               'hasInstances', 'ignoreInEval', 'color'])
