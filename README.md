@@ -40,9 +40,25 @@ pip install tqdm
 
 ## 1. Run demo.py
 
+### Cityscapes
+
 ```
 $ python demo.py -g 0 -m cityscapes -f aachen_000000_000019_leftImg8bit.png
 ```
+
+### Pascal VOC2012
+
+```
+$ python demo.py -g 0 -m voc2012 -f 2008_000005.jpg
+```
+
+### ADE20K
+
+```
+$ python demo.py -g 0 -m ade20k -f ADE_val_00000001.jpg
+```
+
+### FAQ
 
 If you get `RuntimeError: Invalid DISPLAY variable`, how about specifying the matplotlib's backend by an environment variable?
 
