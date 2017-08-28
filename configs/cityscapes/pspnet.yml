@@ -6,8 +6,8 @@ dataset:
     module: datasets
     name: CityscapesSemanticSegmentationDataset
     args:
-      img_dir: data/cityscapes/leftImg8bit
-      label_dir: data/cityscapes/gtFine
+      data_dir: data/cityscapes
+      label_resolution: gtFine
       crop_size: [713, 713]
       color_sigma: null
       ignore_labels: null

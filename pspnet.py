@@ -239,7 +239,7 @@ class PSPNet(chainer.Chain):
             'pyramids': [6, 3, 2, 1],
             'mean': np.array([123.68, 116.779, 103.939]),
             'url': 'https://github.com/mitmul/chainer-pspnet/releases/download'
-                   '/ChainerCV_PSPNet/pspnet101_cityscapes_713_reference.npz'
+                   '/ChainerCV_PSPNet/pspnet101_VOC2012_473_reference.npz'
         },
         'cityscapes': {
             'n_class': 19,
