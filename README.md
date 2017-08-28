@@ -63,7 +63,7 @@ $ python demo.py -g 0 -m ade20k -f ADE_val_00000001.jpg
 If you get `RuntimeError: Invalid DISPLAY variable`, how about specifying the matplotlib's backend by an environment variable?
 
 ```
-$ MPLBACKEND=Agg python demo.py -g 0 -m Cityscapes -f aachen_000000_000019_leftImg8bit.png
+$ MPLBACKEND=Agg python demo.py -g 0 -m cityscapes -f aachen_000000_000019_leftImg8bit.png
 ```
 
 ---
