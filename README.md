@@ -5,7 +5,7 @@ This is an unofficial implementation of Pyramid Scene Parsing Network (PSPNet) i
 
 ![](https://github.com/mitmul/chainer-pspnet/wiki/images/demoVideo.gif)
 
-# Training
+# [WIP] Training
 
 ## Requirement
 
